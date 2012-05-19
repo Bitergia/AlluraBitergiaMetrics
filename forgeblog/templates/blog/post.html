@@ -1,0 +1,24 @@
+{% extends g.theme.master %}
+
+{% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}: {{post.title}}{% endblock %}
+
+{% block header %}{{post.title}}{% endblock %}
+
+{% block actions %}
+  {% if h.has_access(post, 'write')() %}
+    <a href="edit" title="Edit"><b data-icon="{{g.icons['pencil'].char}}" class="ico {{g.icons['pencil'].css}}"></b></a>
+  {% endif %}
+  <a href="history" title="History"><b data-icon="{{g.icons['history'].char}}" class="ico {{g.icons['history'].css}}"></b></a>
+  {{c.subscribe_form.display(value=subscribed, action='subscribe', style='icon')}}
+  <a href="feed" title="RSS"><b data-icon="{{g.icons['feed'].char}}" class="ico {{g.icons['feed'].css}}"></b></a>
+{% endblock %}
+
+{% block content %}
+    {{c.form.display(value=post, base_post=base_post)}}
+    <div style="clear:both;"></div>
+    {% if post.discussion_thread and c.app.show_discussion %}
+    <div style="margin-top: 10px">
+      {{c.thread.display(value=post.discussion_thread)}}
+    </div>
+    {% endif %}
+{% endblock %}
