@@ -4,21 +4,12 @@
 
 {% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Recent posts{% endblock %}
 
-{% block extra_css %}
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="feed.rss"/>
-    <link rel="alternate" type="application/atom+xml" title="Atom" href="feed.atom"/>
-{% endblock %}
-
-{% block actions %}
-    <a href="feed" title="RSS"><b data-icon="{{g.icons['feed'].char}}" class="ico {{g.icons['feed'].css}}" title="Feed"></b></a>
-{% endblock %}
-
 {% block content %}
-  {% for post in posts %}
+  {% for metrics in metrics %}
     {% if not loop.first %}
       <hr />
     {% endif %}
-    {{c.form.display(value=post)}}
+    {{c.form.display(value=metrics)}}
   {% endfor %}
   {{c.pager.display(limit=limit, page=page, count=count)}}
 {% endblock %}

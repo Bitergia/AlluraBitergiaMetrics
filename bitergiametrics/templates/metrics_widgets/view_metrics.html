@@ -3,19 +3,6 @@
 {{value.html_text|safe}}
 {{lib.related_artifacts(value)}}
 <em class="grid-19">
-  Posted by <a href="{{base_post.author().url()}}">{{lib.gravatar_or_name(base_post.author(), size=16)}}</a> {{lib.abbr_date(value.timestamp)}}
-  {% if value.state != 'published' %}
-	<span>| {{value.state.capitalize()}}</span>
-  {% endif %}
-  {% if h.has_access(value, 'write')() %}
-	<span>| <a href="{{value.url()}}edit">Edit</a></span>
-  {% endif %}
+Showing METRICS for the project
 </em>
-{% if value.labels %}
-<em class="grid-19">
-  <strong>Labels:</strong>
-  {% for l in value.labels %}
-    <span><a href="{{c.app.url}}search?q=labels_t:{{l}}">{{l}}</a> </span>
-  {% endfor %}
-</em>
-{% endif %}
+
