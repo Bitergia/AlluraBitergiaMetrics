@@ -26,9 +26,9 @@ from allura import model as M
 from allura.controllers import BaseController, AppDiscussionController
 
 # Local imports
-from forgeblog import model as BM
-from forgeblog import version
-from forgeblog import widgets
+from bitergiametrics import model as BM
+from bitergiametrics import version
+from bitergiametrics import widgets
 
 log = logging.getLogger(__name__)
 
@@ -46,13 +46,12 @@ class W:
     preview_post_form = widgets.PreviewPostForm()
     subscribe_form = SubscribeForm()
 
-class ForgeBlogApp(Application):
+class BitergiaMetricsApp(Application):
     __version__ = version.__version__
-    tool_label='Blog'
-    default_mount_label='Blog'
-    default_mount_point='blog'
-    permissions = ['configure', 'read', 'write',
-                    'unmoderated_post', 'post', 'moderate', 'admin']
+    tool_label='Metrics'
+    default_mount_label='Metrics'
+    default_mount_point='metrics'
+    permissions = ['configure', 'read', 'write', 'admin']
     ordinal=14
     installable=True
     config_options = Application.config_options
@@ -65,7 +64,7 @@ class ForgeBlogApp(Application):
     def __init__(self, project, config):
         Application.__init__(self, project, config)
         self.root = RootController()
-        self.admin = BlogAdminController(self)
+        self.admin = MetricsAdminController(self)
 
     @property
     @h.exceptionless([], log)
@@ -75,13 +74,6 @@ class ForgeBlogApp(Application):
             return [
                 SitemapEntry(menu_id, '.')[self.sidebar_menu()] ]
 
-    @property
-    def show_discussion(self):
-        if 'show_discussion' in self.config.options:
-            return self.config.options['show_discussion']
-        else:
-            return True
-
     @h.exceptionless([], log)
     def sidebar_menu(self):
         base = c.app.url
@@ -89,16 +81,14 @@ class ForgeBlogApp(Application):
             SitemapEntry('Home', base),
             SitemapEntry('Search', base + 'search'),
             ]
-        if has_access(self, 'write')():
-            links += [ SitemapEntry('New Post', base + 'new') ]
         return links
 
     def admin_menu(self):
-        return super(ForgeBlogApp, self).admin_menu(force_options=True)
+        return super(BitergiaMetricsApp, self).admin_menu(force_options=True)
 
     def install(self, project):
         'Set up any default permissions and roles here'
-        super(ForgeBlogApp, self).install(project)
+        super(BitergiaMetricsApp, self).install(project)
 
         # Setup permissions
         role_admin = M.ProjectRole.by_name('Admin')._id
@@ -107,29 +97,27 @@ class ForgeBlogApp(Application):
         role_anon = M.ProjectRole.by_name('*anonymous')._id
         self.config.acl = [
             M.ACE.allow(role_anon, 'read'),
-            M.ACE.allow(role_auth, 'post'),
-            M.ACE.allow(role_auth, 'unmoderated_post'),
             M.ACE.allow(role_developer, 'write'),
-            M.ACE.allow(role_developer, 'moderate'),
             M.ACE.allow(role_admin, 'configure'),
             M.ACE.allow(role_admin, 'admin'),
             ]
 
     def uninstall(self, project):
         "Remove all the tool's artifacts from the database"
-        BM.Attachment.query.remove(dict(app_config_id=c.app.config._id))
-        BM.BlogPost.query.remove(dict(app_config_id=c.app.config._id))
-        BM.BlogPostSnapshot.query.remove(dict(app_config_id=c.app.config._id))
-        super(ForgeBlogApp, self).uninstall(project)
+        # BM.Attachment.query.remove(dict(app_config_id=c.app.config._id))
+        # BM.BlogPost.query.remove(dict(app_config_id=c.app.config._id))
+        # BM.BlogPostSnapshot.query.remove(dict(app_config_id=c.app.config._id))
+        super(BitergiaMetricsApp, self).uninstall(project)
 
 class RootController(BaseController):
 
     def __init__(self):
-        setattr(self, 'feed.atom', self.feed)
-        setattr(self, 'feed.rss', self.feed)
-        self._discuss = AppDiscussionController()
+        # setattr(self, 'feed.atom', self.feed)
+        # setattr(self, 'feed.rss', self.feed)
+        # self._discuss = AppDiscussionController()
+        pass
 
-    @expose('jinja:forgeblog:templates/blog/index.html')
+    @expose('jinja:bitergiametrics:templates/blog/index.html')
     @with_trailing_slash
     def index(self, page=0, limit=10, **kw):
         query_filter = dict(app_config_id=c.app.config._id)
@@ -144,7 +132,7 @@ class RootController(BaseController):
         c.pager = W.pager
         return dict(posts=posts, page=page, limit=limit, count=post_count)
 
-    @expose('jinja:forgeblog:templates/blog/search.html')
+    @expose('jinja:bitergiametrics:templates/blog/search.html')
     @validate(dict(q=validators.UnicodeString(if_empty=None),
                    history=validators.StringBool(if_empty=False)))
     def search(self, q=None, history=None, **kw):
@@ -164,7 +152,7 @@ class RootController(BaseController):
             if results: count=results.hits
         return dict(q=q, history=history, results=results or [], count=count)
 
-    @expose('jinja:forgeblog:templates/blog/edit_post.html')
+    @expose('jinja:bitergiametrics:templates/blog/edit_post.html')
     @without_trailing_slash
     def new(self, **kw):
         require_access(c.app, 'write')
@@ -240,7 +228,7 @@ class PostController(BaseController):
     def _check_security(self):
         require_access(self.post, 'read')
 
-    @expose('jinja:forgeblog:templates/blog/post.html')
+    @expose('jinja:bitergiametrics:templates/blog/post.html')
     @with_trailing_slash
     def index(self, **kw):
         if self.post.state == 'draft':
@@ -253,7 +241,7 @@ class PostController(BaseController):
         base_post = self.post
         return dict(post=post, base_post=base_post)
 
-    @expose('jinja:forgeblog:templates/blog/edit_post.html')
+    @expose('jinja:bitergiametrics:templates/blog/edit_post.html')
     @without_trailing_slash
     def edit(self, **kw):
         require_access(self.post, 'write')
@@ -264,13 +252,13 @@ class PostController(BaseController):
         return dict(post=self.post)
 
     @without_trailing_slash
-    @expose('jinja:forgeblog:templates/blog/post_history.html')
+    @expose('jinja:bitergiametrics:templates/blog/post_history.html')
     def history(self):
         posts = self.post.history()
         return dict(title=self.post.title, posts=posts)
 
     @without_trailing_slash
-    @expose('jinja:forgeblog:templates/blog/post_diff.html')
+    @expose('jinja:bitergiametrics:templates/blog/post_diff.html')
     def diff(self, v1, v2):
         p1 = self._get_version(int(v1))
         p2 = self._get_version(int(v2))
@@ -342,12 +330,12 @@ class PostController(BaseController):
         except ValueError:
             raise exc.HTTPNotFound()
 
-class BlogAdminController(DefaultAdminController):
+class MetricsAdminController(DefaultAdminController):
     def __init__(self, app):
         self.app = app
 
     @without_trailing_slash
-    @expose('jinja:forgeblog:templates/blog/admin_options.html')
+    @expose('jinja:bitergiametrics:templates/blog/admin_options.html')
     def options(self):
         return dict(app=self.app,
                     allow_config=has_access(self.app, 'configure')())
