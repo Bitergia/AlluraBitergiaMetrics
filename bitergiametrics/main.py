@@ -117,7 +117,7 @@ class RootController(BaseController):
         # self._discuss = AppDiscussionController()
         pass
 
-    @expose('jinja:bitergiametrics:templates/blog/index.html')
+    @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash
     def index(self, page=0, limit=10, **kw):
         query_filter = dict(app_config_id=c.app.config._id)
@@ -132,210 +132,12 @@ class RootController(BaseController):
         c.pager = W.pager
         return dict(posts=posts, page=page, limit=limit, count=post_count)
 
-    @expose('jinja:bitergiametrics:templates/blog/search.html')
-    @validate(dict(q=validators.UnicodeString(if_empty=None),
-                   history=validators.StringBool(if_empty=False)))
-    def search(self, q=None, history=None, **kw):
-        'local tool search'
-        results = []
-        count=0
-        if not q:
-            q = ''
-        else:
-            results = search(
-                q,
-                fq=[
-                    'state_s:published',
-                    'is_history_b:%s' % history,
-                    'project_id_s:%s' % c.project._id,
-                    'mount_point_s:%s'% c.app.config.options.mount_point ])
-            if results: count=results.hits
-        return dict(q=q, history=history, results=results or [], count=count)
-
-    @expose('jinja:bitergiametrics:templates/blog/edit_post.html')
-    @without_trailing_slash
-    def new(self, **kw):
-        require_access(c.app, 'write')
-        now = datetime.utcnow()
-        post = dict(
-            state='draft')
-        c.form = W.new_post_form
-        return dict(post=post)
-
-    @expose()
-    @require_post()
-    @validate(form=W.edit_post_form, error_handler=new)
-    @without_trailing_slash
-    def save(self, **kw):
-        require_access(c.app, 'write')
-        post = BM.BlogPost()
-        for k,v in kw.iteritems():
-            setattr(post, k, v)
-        post.neighborhood_id=c.project.neighborhood_id
-        post.make_slug()
-        post.commit()
-        M.Thread(discussion_id=post.app_config.discussion_id,
-               ref_id=post.index_id(),
-               subject='%s discussion' % post.title)
-        redirect(h.really_unicode(post.url()).encode('utf-8'))
-
-
-    @without_trailing_slash
-    @expose()
-    @validate(dict(
-            since=h.DateTimeConverter(if_empty=None, if_invalid=None),
-            until=h.DateTimeConverter(if_empty=None, if_invalid=None),
-            offset=validators.Int(if_empty=None),
-            limit=validators.Int(if_empty=None)))
-    def feed(self, since=None, until=None, offset=None, limit=None):
-        if request.environ['PATH_INFO'].endswith('.atom'):
-            feed_type = 'atom'
-        else:
-            feed_type = 'rss'
-        title = '%s - %s' % (c.project.name, c.app.config.options.mount_label)
-        feed = M.Feed.feed(
-            dict(project_id=c.project._id, app_config_id=c.app.config._id),
-            feed_type,
-            title,
-            c.app.url,
-            title,
-            since, until, offset, limit)
-        response.headers['Content-Type'] = ''
-        response.content_type = 'application/xml'
-        return feed.writeString('utf-8')
-
-    @with_trailing_slash
-    @expose('jinja:allura:templates/markdown_syntax_dialog.html')
-    def markdown_syntax_dialog(self):
-        'Static dialog page about how to use markdown.'
-        return dict()
-
-    @expose()
-    def _lookup(self, year, month, name, *rest):
-        slug = '/'.join((year, month, urllib2.unquote(name).decode('utf-8')))
-        post = BM.BlogPost.query.get(slug=slug, app_config_id=c.app.config._id)
-        if post is None:
-            raise exc.HTTPNotFound()
-        return PostController(post), rest
-
-class PostController(BaseController):
-
-    def __init__(self, post):
-        self.post = post
-        setattr(self, 'feed.atom', self.feed)
-        setattr(self, 'feed.rss', self.feed)
-
-    def _check_security(self):
-        require_access(self.post, 'read')
-
-    @expose('jinja:bitergiametrics:templates/blog/post.html')
-    @with_trailing_slash
-    def index(self, **kw):
-        if self.post.state == 'draft':
-            require_access(self.post, 'write')
-        c.form = W.view_post_form
-        c.subscribe_form = W.subscribe_form
-        c.thread = W.thread
-        version = kw.pop('version', None)
-        post = self._get_version(version)
-        base_post = self.post
-        return dict(post=post, base_post=base_post)
-
-    @expose('jinja:bitergiametrics:templates/blog/edit_post.html')
-    @without_trailing_slash
-    def edit(self, **kw):
-        require_access(self.post, 'write')
-        c.form = W.edit_post_form
-        c.attachment_add = W.attachment_add
-        c.attachment_list = W.attachment_list
-        c.label_edit = W.label_edit
-        return dict(post=self.post)
-
-    @without_trailing_slash
-    @expose('jinja:bitergiametrics:templates/blog/post_history.html')
-    def history(self):
-        posts = self.post.history()
-        return dict(title=self.post.title, posts=posts)
-
-    @without_trailing_slash
-    @expose('jinja:bitergiametrics:templates/blog/post_diff.html')
-    def diff(self, v1, v2):
-        p1 = self._get_version(int(v1))
-        p2 = self._get_version(int(v2))
-        result = h.diff_text(p1.text, p2.text)
-        return dict(p1=p1, p2=p2, edits=result)
-
-    @expose()
-    @require_post()
-    @validate(form=W.edit_post_form, error_handler=edit)
-    @without_trailing_slash
-    def save(self, delete=None, **kw):
-        require_access(self.post, 'write')
-        if delete:
-            self.post.delete()
-            flash('Post deleted', 'info')
-            redirect(h.really_unicode(c.app.url).encode('utf-8'))
-        for k,v in kw.iteritems():
-            setattr(self.post, k, v)
-        self.post.commit()
-        redirect('.')
-
-    @without_trailing_slash
-    @require_post()
-    @expose()
-    def revert(self, version):
-        require_access(self.post, 'write')
-        orig = self._get_version(version)
-        if orig:
-            self.post.text = orig.text
-        self.post.commit()
-        redirect('.')
-
-    @expose()
-    @validate(W.subscribe_form)
-    def subscribe(self, subscribe=None, unsubscribe=None):
-        if subscribe:
-            self.post.subscribe(type='direct')
-        elif unsubscribe:
-            self.post.unsubscribe()
-        redirect(h.really_unicode(request.referer).encode('utf-8'))
-
-    @without_trailing_slash
-    @expose()
-    @validate(dict(
-            since=h.DateTimeConverter(if_empty=None, if_invalid=None),
-            until=h.DateTimeConverter(if_empty=None, if_invalid=None),
-            offset=validators.Int(if_empty=None),
-            limit=validators.Int(if_empty=None)))
-    def feed(self, since=None, until=None, offset=None, limit=None):
-        if request.environ['PATH_INFO'].endswith('.atom'):
-            feed_type = 'atom'
-        else:
-            feed_type = 'rss'
-        feed = M.Feed.feed(
-            dict(ref_id=self.post.index_id()),
-            feed_type,
-            'Recent changes to %s' % self.post.title,
-            self.post.url(),
-            'Recent changes to %s' % self.post.title,
-            since, until, offset, limit)
-        response.headers['Content-Type'] = ''
-        response.content_type = 'application/xml'
-        return feed.writeString('utf-8')
-
-    def _get_version(self, version):
-        if not version: return self.post
-        try:
-            return self.post.get_version(version)
-        except ValueError:
-            raise exc.HTTPNotFound()
-
 class MetricsAdminController(DefaultAdminController):
     def __init__(self, app):
         self.app = app
 
     @without_trailing_slash
-    @expose('jinja:bitergiametrics:templates/blog/admin_options.html')
+    @expose('jinja:bitergiametrics:templates/metrics/admin_options.html')
     def options(self):
         return dict(app=self.app,
                     allow_config=has_access(self.app, 'configure')())
@@ -345,5 +147,5 @@ class MetricsAdminController(DefaultAdminController):
     @require_post()
     def set_options(self, show_discussion=False):
         self.app.config.options['show_discussion'] = show_discussion and True or False
-        flash('Blog options updated')
+        flash('Metrics options updated')
         redirect(h.really_unicode(c.project.url()+'admin/tools').encode('utf-8'))
