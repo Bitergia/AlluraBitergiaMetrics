@@ -36,15 +36,12 @@ class W:
     thread=w.Thread(
         page=None, limit=None, page_size=None, count=None,
         style='linear')
-    pager = widgets.BlogPager()
-    new_post_form = widgets.NewPostForm()
-    edit_post_form = widgets.EditPostForm()
-    view_post_form = widgets.ViewPostForm()
-    label_edit = ffw.LabelEdit()
-    attachment_add = ffw.AttachmentAdd()
-    attachment_list = ffw.AttachmentList()
-    preview_post_form = widgets.PreviewPostForm()
-    subscribe_form = SubscribeForm()
+    # pager = widgets.BlogPager()
+    # new_post_form = widgets.NewPostForm()
+    # edit_post_form = widgets.EditPostForm()
+    view_metrics_form = widgets.ViewMetricsForm()
+    # label_edit = ffw.LabelEdit()
+    # subscribe_form = SubscribeForm()
 
 class BitergiaMetricsApp(Application):
     __version__ = version.__version__
@@ -123,14 +120,15 @@ class RootController(BaseController):
         query_filter = dict(app_config_id=c.app.config._id)
         if not has_access(c.app, 'write')():
             query_filter['state'] = 'published'
-        q = BM.BlogPost.query.find(query_filter)
-        post_count = q.count()
-        limit, page = h.paging_sanitizer(limit, page, post_count)
-        posts = q.sort('timestamp', pymongo.DESCENDING) \
-                 .skip(page * limit).limit(limit)
-        c.form = W.preview_post_form
-        c.pager = W.pager
-        return dict(posts=posts, page=page, limit=limit, count=post_count)
+        # q = BM.BlogPost.query.find(query_filter)
+        # post_count = q.count()
+        # limit, page = h.paging_sanitizer(limit, page, post_count)
+        # posts = q.sort('timestamp', pymongo.DESCENDING) \
+        #         .skip(page * limit).limit(limit)
+        c.form = W.view_metrics_form
+        # c.pager = W.pager
+        # return dict(posts=posts, page=page, limit=limit, count=post_count)
+        return dict()
 
 class MetricsAdminController(DefaultAdminController):
     def __init__(self, app):

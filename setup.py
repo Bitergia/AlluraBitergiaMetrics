@@ -24,6 +24,6 @@ setup(name='BitergiaMetrics',
       entry_points="""
       # -*- Entry points: -*-
       [allura]
-      blog=bitergiametrics.main:BitergiaMetricsApp
+      metrics=bitergiametrics.main:BitergiaMetricsApp
       """,
       )

@@ -48,7 +48,7 @@ class MetricSnapshot(M.Snapshot):
     def email_address(self):
         return self.original().email_address
 
-class MetricPost(M.VersionedArtifact):
+class Metric(M.VersionedArtifact):
     class __mongometa__:
         name='metric'
         history_class = MetricSnapshot

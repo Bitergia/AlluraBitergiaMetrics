@@ -12,9 +12,9 @@ bitergiametrics/main.py
 bitergiametrics/version.py
 bitergiametrics/widgets.py
 bitergiametrics/model/__init__.py
-bitergiametrics/model/blog.py
+bitergiametrics/model/metrics.py
 bitergiametrics/templates/__init__.py
-bitergiametrics/templates/blog_widgets/__init__.py
+bitergiametrics/templates/metrics_widgets/__init__.py
 bitergiametrics/tests/__init__.py
 bitergiametrics/tests/test_roles.py
 bitergiametrics/tests/functional/__init__.py
