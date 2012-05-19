@@ -1,1 +1,1 @@
-from blog import BlogPost, Attachment, BlogPostSnapshot
+from metrics import Metric, MetricSnapshot

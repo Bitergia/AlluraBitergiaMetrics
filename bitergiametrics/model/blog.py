@@ -16,13 +16,13 @@ from allura.lib import utils, patience
 config = utils.ConfigProxy(
     common_suffix='forgemail.domain')
 
-class BlogPostSnapshot(M.Snapshot):
+class MetricSnapshot(M.Snapshot):
     class __mongometa__:
-        name='blog_post_snapshot'
-    type_s='Blog Post Snapshot'
+        name='metric_snapshot'
+    type_s='Metric Snapshot'
 
     def original(self):
-        return BlogPost.query.get(_id=self.artifact_id)
+        return Metric.query.get(_id=self.artifact_id)
 
     def shorthand_id(self):
         return '%s#%s' % (self.original().shorthand_id(), self.version)
@@ -31,7 +31,7 @@ class BlogPostSnapshot(M.Snapshot):
         return self.original().url() + '?version=%d' % self.version
 
     def index(self):
-        result = super(BlogPostSnapshot, self).index()
+        result = super(MetricSnapshot, self).index()
         result.update(
             title_s='Version %d of %s' % (
                 self.version, self.original().shorthand_id()),
@@ -45,19 +45,15 @@ class BlogPostSnapshot(M.Snapshot):
         return g.markdown_wiki.convert(self.data.text)
 
     @property
-    def attachments(self):
-        return self.original().attachments
-
-    @property
     def email_address(self):
         return self.original().email_address
 
-class BlogPost(M.VersionedArtifact):
+class MetricPost(M.VersionedArtifact):
     class __mongometa__:
-        name='blog_post'
-        history_class = BlogPostSnapshot
+        name='metric'
+        history_class = MetricSnapshot
         unique_indexes = [ ('project_id', 'app_config_id', 'slug') ]
-    type_s = 'Blog Post'
+    type_s = 'Metric'
 
     title = FieldProperty(str, if_missing='Untitled')
     text = FieldProperty(str, if_missing='')
@@ -67,7 +63,7 @@ class BlogPost(M.VersionedArtifact):
     neighborhood_id = ForeignIdProperty('Neighborhood', if_missing=None)
 
     def author(self):
-        '''The author of the first snapshot of this BlogPost'''
+        '''The author of the first snapshot of this Metric'''
         return M.User.query.get(_id=self.get_version(1).author.id) or M.User.anonymous()
 
     def _get_date(self):
@@ -86,35 +82,6 @@ class BlogPost(M.VersionedArtifact):
     def html_text(self):
         return g.markdown.convert(self.text)
 
-    @property
-    def html_text_preview(self):
-        """Return an html preview of the BlogPost text.
-
-        Truncation happens at paragraph boundaries to avoid chopping markdown
-        in inappropriate places.
-
-        If the entire post is one paragraph, the full text is returned.
-        If the entire text is <= 400 chars, the full text is returned.
-        Else, at least 400 chars are returned, rounding up to the nearest
-        whole paragraph.
-
-        If truncation occurs, a hyperlink to the full text is appended.
-
-        """
-        # Splitting on spaces or single lines breaks isn't sufficient as some
-        # markup can span spaces and single line breaks. Converting to HTML
-        # first and *then* truncating doesn't work either, because the
-        # ellipsis tag ends up orphaned from the main text.
-        ellipsis = '... [read more](%s)' % self.url()
-        paragraphs = self.text.replace('\r','').split('\n\n')
-        total_length = 0
-        for i, p in enumerate(paragraphs):
-            total_length += len(p)
-            if total_length >= 400:
-                break
-        text = '\n\n'.join(paragraphs[:i+1])
-        return g.markdown.convert(text + (ellipsis if i + 1 < len(paragraphs)
-                                                   else ''))
 
     @property
     def email_address(self):
@@ -145,7 +112,7 @@ class BlogPost(M.VersionedArtifact):
         return self.slug
 
     def index(self):
-        result = super(BlogPost, self).index()
+        result = super(Metric, self).index()
         result.update(
             title_s=self.slug,
             type_s=self.type_s,
@@ -160,43 +127,12 @@ class BlogPost(M.VersionedArtifact):
 
     def commit(self):
         self.subscribe()
-        super(BlogPost, self).commit()
-        if self.version > 1:
-            v1 = self.get_version(self.version-1)
-            v2 = self
-            la = [ line + '\n'  for line in v1.text.splitlines() ]
-            lb = [ line + '\n'  for line in v2.text.splitlines() ]
-            diff = ''.join(patience.unified_diff(
-                    la, lb,
-                    'v%d' % v1.version,
-                    'v%d' % v2.version))
-            description = diff
-            if v1.state != 'published' and v2.state == 'published':
-                M.Feed.post(self, self.title, self.text, author=self.author())
-                description = self.text
-                subject = '%s created post %s' % (
-                    c.user.username, self.title)
-            elif v1.title != v2.title:
-                subject = '%s renamed post %s to %s' % (
-                    c.user.username, v2.title, v1.title)
-            else:
-                subject = '%s modified post %s' % (
-                    c.user.username, self.title)
-        else:
-            description = self.text
-            subject = '%s created post %s' % (
-                c.user.username, self.title)
-            if self.state == 'published':
-                M.Feed.post(self, self.title, self.text, author=self.author())
+        super(Metric, self).commit()
+        description = self.text
+        subject = '%s created metric %s' % (
+            c.user.username, self.title)
         if self.state == 'published':
             M.Notification.post(
                 artifact=self, topic='metadata', text=description, subject=subject)
-
-class Attachment(M.BaseAttachment):
-    ArtifactClass=BlogPost
-    class __mongometa__:
-        polymorphic_identity='BlogAttachment'
-    attachment_type=FieldProperty(str, if_missing='BlogAttachment')
-
 
 Mapper.compile_all()
