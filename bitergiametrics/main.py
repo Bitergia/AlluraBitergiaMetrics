@@ -1,6 +1,6 @@
 #-*- python -*-
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib2
 
 # Non-stdlib imports
@@ -29,6 +29,8 @@ from allura.controllers import BaseController, AppDiscussionController
 from bitergiametrics import model as BM
 from bitergiametrics import version
 from bitergiametrics import widgets
+
+from forgetracker import model as TM
 
 log = logging.getLogger(__name__)
 
@@ -128,7 +130,25 @@ class RootController(BaseController):
         c.form = W.view_metrics_form
         # c.pager = W.pager
         # return dict(posts=posts, page=page, limit=limit, count=post_count)
-        return dict()
+        
+        total = TM.Ticket.query.find(dict(app_config_id=c.app.config._id)).count()
+        
+        now = datetime.utcnow()
+        week = timedelta(weeks=1)
+        week_ago = now - week
+
+        week_tickets = self.tickets_since(week_ago)
+
+        return dict(week_ago=str(week_ago),week_tickets=week_tickets, total=total)
+    
+    def tickets_since(self, when=None):
+        count = 0
+        if when:
+            count = TM.Ticket.query.find(dict(app_config_id=c.app.config._id,
+                created_date={'$gte':when})).count()
+        else:
+            count = TM.Ticket.query.find(dict(app_config_id=c.app.config._id)).count()
+        return count
 
 class MetricsAdminController(DefaultAdminController):
     def __init__(self, app):

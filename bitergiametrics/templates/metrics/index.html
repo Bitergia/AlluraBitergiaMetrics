@@ -11,4 +11,8 @@
     {% endif %}
     {{c.form.display(value=metrics)}}
   {% endfor %}
+  <ul>
+  <li># tickets: {{total}}</li>
+  <li>{{week_ago}} 7 days: {{week_tickets}}</li>
+  </ul>  
 {% endblock %}
