@@ -131,7 +131,8 @@ class RootController(BaseController):
         # c.pager = W.pager
         # return dict(posts=posts, page=page, limit=limit, count=post_count)
         
-        total = TM.Ticket.query.find(dict(app_config_id=c.app.config._id)).count()
+        total = TM.Ticket.query.find().count()
+        tickets = TM.Ticket.query.find()
         
         now = datetime.utcnow()
         week = timedelta(weeks=1)
@@ -139,13 +140,13 @@ class RootController(BaseController):
 
         week_tickets = self.tickets_since(week_ago)
 
-        return dict(week_ago=str(week_ago),week_tickets=week_tickets, total=total)
+        return dict(week_ago=str(week_ago),week_tickets=week_tickets, 
+                    total=total, tickets = tickets) 
     
     def tickets_since(self, when=None):
         count = 0
         if when:
-            count = TM.Ticket.query.find(dict(app_config_id=c.app.config._id,
-                created_date={'$gte':when})).count()
+            count = TM.Ticket.query.find(dict(created_date={'$gte':when})).count()
         else:
             count = TM.Ticket.query.find(dict(app_config_id=c.app.config._id)).count()
         return count
