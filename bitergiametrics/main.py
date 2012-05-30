@@ -136,11 +136,10 @@ class RootController(BaseController):
         bichodb = None
         tickets_per_week = None
         try:
-            bichodb = MySQLdb.connect(user="root", db="bicho1")
+            bichodb = MySQLdb.connect(user="root", db="bicho")
             cursor = bichodb.cursor()
             cursor.execute("SELECT DATE_FORMAT(submitted_on, '%Y%V') AS yearweek, COUNT(*) AS nissues FROM issues GROUP BY yearweek")
             tickets_per_week = cursor.fetchall()
-            bichodb.close()
         except MySQLdb.Error, e:
             log.error("Error accessing Bicho %d: %s" % (e.args[0], e.args[1]))
         finally:
