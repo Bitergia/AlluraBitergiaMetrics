@@ -14,8 +14,10 @@
   </ul>
   <ul>
   <li># Allura tickets</li>
-  {% for row in tickets_per_week %}
-  	<li>Tickets per week: {{row}}</li>
-  {% endfor %}
+   {% if tickets_per_week %}  
+	  {% for row in tickets_per_week %}
+	  	<li>Tickets per week: {{row}}</li>
+	  {% endfor %}
+	{% endif %}
   </ul>
 {% endblock %}
