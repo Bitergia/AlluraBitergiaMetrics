@@ -5,17 +5,17 @@
 {% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Recent posts{% endblock %}
 
 {% block content %}
-  {% for metric in metrics %}
-    {% if not loop.first %}
-      <hr />
-    {% endif %}
-    {{c.form.display(value=metric)}}
-  {% endfor %}
   <ul>
   <li># tickets: {{total}}</li>
   <li>{{week_ago}} 7 days: {{week_tickets}}</li>
   {% for ticket in tickets %}
   	<li>Ticket Found: {{ticket}}</li>
   {% endfor %}
-  </ul>  
+  </ul>
+  <ul>
+  <li># Allura tickets</li>
+  {% for row in tickets_per_week %}
+  	<li>Tickets per week: {{row}}</li>
+  {% endfor %}
+  </ul>
 {% endblock %}

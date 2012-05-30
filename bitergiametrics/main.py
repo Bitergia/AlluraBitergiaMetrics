@@ -11,6 +11,7 @@ from tg.decorators import with_trailing_slash, without_trailing_slash
 from pylons import g, c, request, response
 from formencode import validators
 from webob import exc
+import MySQLdb
 
 # Pyforge-specific imports
 from allura.app import Application, ConfigOption, SitemapEntry
@@ -115,7 +116,7 @@ class RootController(BaseController):
         # setattr(self, 'feed.rss', self.feed)
         # self._discuss = AppDiscussionController()
         pass
-
+    
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash
     def index(self, page=0, limit=10, **kw):
@@ -131,6 +132,13 @@ class RootController(BaseController):
         # c.pager = W.pager
         # return dict(posts=posts, page=page, limit=limit, count=post_count)
         
+        # TODO: error and config management. Share db connection
+        bichodb = MySQLdb.connect(user="root", db="bicho")
+        cursor = bichodb.cursor()
+        cursor.execute("SELECT DATE_FORMAT(submitted_on, '%Y%V') AS yearweek, COUNT(*) AS nissues FROM issues GROUP BY yearweek")
+        tickets_per_week = cursor.fetchall()
+        bichodb.close() 
+        
         total = TM.Ticket.query.find().count()
         tickets = TM.Ticket.query.find()
         
@@ -139,9 +147,10 @@ class RootController(BaseController):
         week_ago = now - week
 
         week_tickets = self.tickets_since(week_ago)
-
+        
+           
         return dict(week_ago=str(week_ago),week_tickets=week_tickets, 
-                    total=total, tickets = tickets) 
+                    total=total, tickets = tickets, tickets_per_week = tickets_per_week) 
     
     def tickets_since(self, when=None):
         count = 0
