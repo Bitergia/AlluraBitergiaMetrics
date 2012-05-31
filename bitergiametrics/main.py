@@ -134,12 +134,13 @@ class RootController(BaseController):
         
         # TODO: error and config management. Share db connection
         bichodb = None
-        tickets_per_week = None
+        tickets_per_month = None
         try:
             bichodb = MySQLdb.connect(user="root", db="bicho")
             cursor = bichodb.cursor()
-            cursor.execute("SELECT DATE_FORMAT(submitted_on, '%Y%V') AS yearweek, COUNT(*) AS nissues FROM issues GROUP BY yearweek")
-            tickets_per_week = cursor.fetchall()
+            # cursor.execute("SELECT DATE_FORMAT(submitted_on, '%Y%V') AS yearweek, COUNT(*) AS nissues FROM issues GROUP BY yearweek")
+            cursor.execute("SELECT id, DATE_FORMAT(submitted_on, '%Y') as year, DATE_FORMAT(submitted_on, '%m') as month, DATE_FORMAT(submitted_on, '%Y %m') AS yearmonth, COUNT(*) AS nissues FROM issues GROUP BY yearmonth order by yearmonth")
+            tickets_per_month = cursor.fetchall()
         except MySQLdb.Error, e:
             log.error("Error accessing Bicho %d: %s" % (e.args[0], e.args[1]))
         finally:
@@ -158,7 +159,7 @@ class RootController(BaseController):
         
            
         return dict(week_ago=str(week_ago),week_tickets=week_tickets, 
-                    total=total, tickets = tickets, tickets_per_week = tickets_per_week) 
+                    total=total, tickets = tickets, tickets_per_month = tickets_per_month) 
     
     def tickets_since(self, when=None):
         count = 0

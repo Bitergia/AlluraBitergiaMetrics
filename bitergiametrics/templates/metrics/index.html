@@ -2,21 +2,21 @@
 
 {% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
 
-{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Recent posts{% endblock %}
+{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia Metrics{% endblock %}
 
 {% block content %}
-  <ul>
+<!-- <ul>
   <li># tickets: {{total}}</li>
   <li>{{week_ago}} 7 days: {{week_tickets}}</li>
   {% for ticket in tickets %}
   	<li>Ticket Found: {{ticket}}</li>
   {% endfor %}
-  </ul>
+  </ul>  -->  
   <ul>
-  <li># Allura tickets</li>
-   {% if tickets_per_week %}  
-	  {% for row in tickets_per_week %}
-	  	<li>Tickets per week: {{row}}</li>
+  <li># Bicho Stats for Allura tickets </li>
+   {% if tickets_per_month %}  
+	  {% for row in tickets_per_month %}
+	  	<li>Tickets per month: {{row}}</li>
 	  {% endfor %}
 	{% endif %}
   </ul>
