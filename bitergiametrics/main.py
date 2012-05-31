@@ -12,6 +12,7 @@ from pylons import g, c, request, response
 from formencode import validators
 from webob import exc
 import MySQLdb
+import json
 
 # Pyforge-specific imports
 from allura.app import Application, ConfigOption, SitemapEntry
@@ -138,9 +139,35 @@ class RootController(BaseController):
         try:
             bichodb = MySQLdb.connect(user="root", db="bicho")
             cursor = bichodb.cursor()
+            tickets_month_sql  = "SELECT id, DATE_FORMAT(submitted_on, '%Y') as year, "
+            tickets_month_sql += "DATE_FORMAT(submitted_on, '%m') as month, "
+            tickets_month_sql += "DATE_FORMAT(submitted_on, '%Y %m') AS yearmonth, "
+            tickets_month_sql += "COUNT(*) AS nissues FROM issues "
+            tickets_month_sql += "GROUP BY yearmonth order by yearmonth" 
             # cursor.execute("SELECT DATE_FORMAT(submitted_on, '%Y%V') AS yearweek, COUNT(*) AS nissues FROM issues GROUP BY yearweek")
-            cursor.execute("SELECT id, DATE_FORMAT(submitted_on, '%Y') as year, DATE_FORMAT(submitted_on, '%m') as month, DATE_FORMAT(submitted_on, '%Y %m') AS yearmonth, COUNT(*) AS nissues FROM issues GROUP BY yearmonth order by yearmonth")
+            cursor.execute(tickets_month_sql) 
             tickets_per_month = cursor.fetchall()
+            
+            tickets_per_month_json = {}
+            tickets_per_month_json['id'] = []
+            tickets_per_month_json['year'] = []
+            tickets_per_month_json['month'] = []
+            tickets_per_month_json['date'] = []
+            tickets_per_month_json['tickets'] = []
+            
+            for ticket in tickets_per_month:                
+                tickets_per_month_json['id'].append(ticket[0])
+                tickets_per_month_json['year'].append(ticket[1])
+                tickets_per_month_json['month'].append(ticket[2])
+                tickets_per_month_json['date'].append(ticket[3])
+                tickets_per_month_json['tickets'].append(ticket[4])
+            
+            f = open ("tickets_per_month.json", 'w')
+            # f.write(tickets_per_month)            
+            f.write(json.dumps(tickets_per_month_json))            
+            f.close()
+            
+            
         except MySQLdb.Error, e:
             log.error("Error accessing Bicho %d: %s" % (e.args[0], e.args[1]))
         finally:
