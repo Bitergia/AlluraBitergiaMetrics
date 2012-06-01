@@ -16,23 +16,14 @@ Allura integation. Visualization is still preliminary and incomplete.
 </p>
 
     <div class="box">
-    <h2>Commits, committers per month</h2>
+    <h2>Opened Tickets per month</h2>
     <div class="container" id="commits-time"></div>
-    <p>Top chart shows number of commits per month. Below it, number of committers active 
-    during the same month. The bottom chart shows also number of commits per month, and allows 
-    the selection of the period to show in the upper charts. Move the pointer over the upper 
-    charts to see the numbers. [<a href="{{g.app_static('tickets_per_month.json')}}">Data</a>]</p>
+    <p>Top chart shows number of opened tickets per month. The bottom chart shows also number 
+    of opened tickets per month, and allows 
+    the selection of the period to show in the upper charts. 
+    [<a href="{{g.app_static('tickets_per_month.json')}}">Data</a>]</p>
     </div>
   
-  <!-- <ul>
-  <li># Bicho Stats for Allura tickets </li>
-   {% if tickets_per_month %}  
-	  {% for row in tickets_per_month %}
-	  	<li>Tickets per month: {{row}}</li>
-	  {% endfor %}
-	{% endif %}
-  </ul> -->
-
 <script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
 <script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
 <script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
