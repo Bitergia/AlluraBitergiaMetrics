@@ -137,7 +137,7 @@ class RootController(BaseController):
         bichodb = None
         tickets_per_month = None
         try:
-            bichodb = MySQLdb.connect(user="root", db="bicho")
+            bichodb = MySQLdb.connect(user="root", db="bicho_allura")
             cursor = bichodb.cursor()
             tickets_month_sql  = "SELECT id, DATE_FORMAT(submitted_on, '%Y') as year, "
             tickets_month_sql += "DATE_FORMAT(submitted_on, '%m') as month, "
