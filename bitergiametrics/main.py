@@ -161,8 +161,8 @@ class RootController(BaseController):
                 tickets_per_month_json['month'].append(ticket[2])
                 tickets_per_month_json['date'].append(ticket[3])
                 tickets_per_month_json['tickets'].append(ticket[4])
-            
-            f = open ("tickets_per_month.json", 'w')
+            # FIXME: Find better way to find the path to the file
+            f = open ("../BitergiaMetrics/bitergiametrics/nf/metrics/tickets_per_month.json", 'w')
             # f.write(tickets_per_month)            
             f.write(json.dumps(tickets_per_month_json))            
             f.close()

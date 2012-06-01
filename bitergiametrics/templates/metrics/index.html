@@ -5,19 +5,38 @@
 {% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia Metrics{% endblock %}
 
 {% block content %}
-<!-- <ul>
-  <li># tickets: {{total}}</li>
-  <li>{{week_ago}} 7 days: {{week_tickets}}</li>
-  {% for ticket in tickets %}
-  	<li>Ticket Found: {{ticket}}</li>
-  {% endfor %}
-  </ul>  -->  
-  <ul>
+
+<p><img src="{{g.app_static('bitergia-logo.png')}}"><h1>Evolution of Allura</h1></p>
+
+<p>
+Proof of concept of how some parameters of the evolution of a software project can be visualized. 
+Allura integation. Visualization is still preliminary and incomplete.
+</p>
+
+    <div class="box">
+    <h2>Commits, committers per month</h2>
+    <div class="container" id="commits-time"></div>
+    <p>Top chart shows number of commits per month. Below it, number of committers active 
+    during the same month. The bottom chart shows also number of commits per month, and allows 
+    the selection of the period to show in the upper charts. Move the pointer over the upper 
+    charts to see the numbers. [<a href="{{g.app_static('tickets_per_month.json')}}">Data</a>]</p>
+    </div>
+  
+  <!-- <ul>
   <li># Bicho Stats for Allura tickets </li>
    {% if tickets_per_month %}  
 	  {% for row in tickets_per_month %}
 	  	<li>Tickets per month: {{row}}</li>
 	  {% endfor %}
 	{% endif %}
-  </ul>
+  </ul> -->
+
+<script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
+<script type="text/javascript">
+	(function() {
+		displayEvoTickets('commits-time', '{{g.app_static('tickets_per_month.json')}}')
+	})()
+</script>
 {% endblock %}
