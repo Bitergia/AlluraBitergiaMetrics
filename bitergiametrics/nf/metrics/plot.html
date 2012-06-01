@@ -1,14 +1,25 @@
-{% extends g.theme.master %}
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+        font:100% Verdana;
+      }
+      .container {
+        width : 600px;
+        margin: 8px auto;
+      }
+      .box {
+        margin: 8px auto;
+        text-align:center;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="envision.min.css" />
+  </head>
+<body>
 
-{% do g.register_app_css('envision.min.css', compress=False) %}
-
-{% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
-
-{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia Metrics{% endblock %}
-
-{% block content %}
-
-<p><img src="{{g.app_static('bitergia-logo.png')}}"><h1>Evolution of Allura</h1></p>
+<p><img src="bitergia-logo.png"><h1>Evolution of Allura</h1></p>
 
 <p>
 Proof of concept of how some parameters of the evolution of a software project can be visualized. 
@@ -33,13 +44,15 @@ Allura integation. Visualization is still preliminary and incomplete.
 	{% endif %}
   </ul> -->
 
-<script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
-<script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
-<script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
+<script type="text/javascript" src="envision.min.js"></script>
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="swscopio.js"></script>
 <script type="text/javascript">
 	(function() {
 		// displayEvoTickets('commits-time', '{{g.app_static('tickets_per_month.json')}}'),
-		displayEvoCommits('commits-time','{{g.app_static('commits-timeserie_kde.json')}}')
+		displayEvoCommits('commits-time','commits-timeserie_kde.json')
 	})()
 </script>
-{% endblock %}
+
+</body>
+</html>

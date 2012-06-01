@@ -11,17 +11,15 @@ function displayEvoTickets (id, datafile) {
 	V = envision,
 	firstMonth = history.id[0],
 	tickets = [history.id,history.tickets],
-	committers = [history.id,history.committers],
-	ratio = [history.id,history.ratio],
 	dates = history.date,
 	options, vis;
+	
+	alert (tickets);
 
 	options = {
 	    container : container,
 	    data : {
-		price : commits,
-		volume : committers,
-		summary : commits
+		price : tickets,
 	    },
 	    trackFormatter : function (o) {
 		
