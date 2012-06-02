@@ -40,7 +40,7 @@ Metrics{% endblock %} {% block content %}
 		for (var i=1; i<data.length; i++) {
 			names.push(data[i][0]);
 			values.push(data[i][1]);
-			points.push([i + 0.5, parseFloat(data[i][1])]);
+			points.push([i, parseFloat(data[i][1])]);
 		}
 							
 		var horizontal = (horizontal ? true : false), // Show horizontal bars	
@@ -75,13 +75,20 @@ Metrics{% endblock %} {% block content %}
 			bars : {
 				show : true,
 				horizontal : horizontal,
-				shadowSize : 0,
-				barWidth : 0.5
+				shadowSize : 0.5,
+				barWidth : 0.9
 			},
 			mouse : {
 				track : true,
 				relative : true
 			},
+			xaxis: {
+	            noTicks: names.length,
+	            tickFormatter: function(x) {
+	                var x = parseInt(x);
+	                return names[(x - 1)].substr(0,7);
+	            }
+	        },
 			yaxis : {
 				min : 0,
 				autoscaleMargin : 1
