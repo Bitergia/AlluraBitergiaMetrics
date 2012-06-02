@@ -117,6 +117,12 @@ class RootController(BaseController):
         # setattr(self, 'feed.rss', self.feed)
         # self._discuss = AppDiscussionController()
         pass
+
+    @expose('jinja:bitergiametrics:templates/metrics/bar.html')
+    @with_trailing_slash
+    def bar(self, page=0, limit=10, **kw):
+        return dict()
+
     
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash

@@ -1,0 +1,96 @@
+{% extends g.theme.master %} {% do g.register_app_css('bar.css',
+compress=False) %} {% block title %}{{c.project.name}} /
+{{c.app.config.options.mount_label}}{% endblock %} {% block header
+%}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia
+Metrics{% endblock %} {% block content %}
+
+<p>
+	<img src="{{g.app_static('bitergia-logo.png')}}">
+<h1>Evolution of Commits per Company in Open Stack</h1>
+
+[<a href="{{g.app_static('companies_commits_10.csv')}}">Data</a>]</p>
+
+</p>
+
+
+<div id="container"></div>
+<!--[if IE]>
+    <script type="text/javascript" src="{{g.app_static('flashcanvas.js')}}"></script>
+    <![endif]-->
+<script type="text/javascript" src="{{g.app_static('flotr2.js')}}"></script>
+<script type="text/javascript"
+	src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('csv2json.js')}}"></script>
+<script type="text/javascript">
+	var horizontal = false;
+	var container = document.getElementById('container');
+	basic_bars(container, horizontal);
+
+	function basic_bars(container, horizontal) {
+
+	
+		
+		$.get('{{g.app_static('companies_commits_10.csv')}}', function(csv) {
+			
+		var data = CSVToArray(csv);
+		
+		var names = [], values = [], points = [];
+		
+		// First item is name, value title
+		for (var i=1; i<data.length; i++) {
+			names.push(data[i][0]);
+			values.push(data[i][1]);
+			points.push([i + 0.5, parseFloat(data[i][1])]);
+		}
+							
+		var horizontal = (horizontal ? true : false), // Show horizontal bars	
+		d1 = [], // First data series
+		d2 = [], // Second data series
+		point, // Data point variable declaration
+		i;
+
+		for (i = 0; i < 4; i++) {
+
+			if (horizontal) {
+				point = [ Math.ceil(Math.random() * 20), i ];
+			} else {
+				point = [ i, Math.ceil(Math.random() * 20) ];
+			}
+
+			d1.push(point);
+
+			if (horizontal) {
+				point = [ Math.ceil(Math.random() * 20), i + 0.5 ];
+			} else {
+				point = [ i + 0.5, Math.ceil(Math.random() * 20) ];
+			}
+
+			d2.push(point);
+		}
+		;
+
+		// Draw the graph
+		// Flotr.draw(container, [ d1, d2 ], {
+		Flotr.draw(container, [ points ], {
+			bars : {
+				show : true,
+				horizontal : horizontal,
+				shadowSize : 0,
+				barWidth : 0.5
+			},
+			mouse : {
+				track : true,
+				relative : true
+			},
+			yaxis : {
+				min : 0,
+				autoscaleMargin : 1
+			}
+		});
+		});
+	}
+
+
+
+</script>
+{% endblock %}
