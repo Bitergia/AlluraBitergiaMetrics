@@ -122,7 +122,52 @@ class RootController(BaseController):
     @with_trailing_slash
     def bar(self, page=0, limit=10, **kw):
         return dict()
+    
+    @expose('jinja:bitergiametrics:templates/metrics/tickets_swscopio.html')
+    @with_trailing_slash
+    def tickets_swscopio(self, page=0, limit=10, **kw):
 
+        # FIXME: SQL query to get the results            
+        tickets_per_month =  [
+          ['23989','1999','1','Jan 1999','10','2','2','3'],
+          ['23990','1999','2','Feb 1999','15','2','2','3'],
+          ['23991','1999','3','Mar 1999','20','4','9','3'],
+          ['24147','2012','3','Mar 2012','120','6','23','12'],
+          ['24148','2012','4','Apr 2012','150','7','30','15'],
+        ]
+            
+        tickets_per_month_json = {}
+        tickets_per_month_json['id'] = []
+        tickets_per_month_json['year'] = []
+        tickets_per_month_json['month'] = []
+        tickets_per_month_json['date'] = []
+        tickets_per_month_json['live'] = []
+        tickets_per_month_json['people'] = []
+        tickets_per_month_json['open'] = []
+        tickets_per_month_json['close'] = []
+        
+        for ticket in tickets_per_month:                
+            tickets_per_month_json['id'].append(ticket[0])
+            tickets_per_month_json['year'].append(ticket[1])
+            tickets_per_month_json['month'].append(ticket[2])
+            tickets_per_month_json['date'].append(ticket[3])
+            tickets_per_month_json['live'].append(ticket[4])
+            tickets_per_month_json['people'].append(ticket[5])
+            tickets_per_month_json['open'].append(ticket[6])
+            tickets_per_month_json['close'].append(ticket[7])
+        # FIXME: Find better way to find the path to the file
+        f = open ("../BitergiaMetrics/bitergiametrics/nf/metrics/tickets_per_month_swscopio.json", 'w')
+        # f.write(tickets_per_month)            
+        f.write(json.dumps(tickets_per_month_json))            
+        f.close()
+                
+        return dict()
+
+    
+    @expose('jinja:bitergiametrics:templates/metrics/pie.html')
+    @with_trailing_slash
+    def pie(self, page=0, limit=10, **kw):
+        return dict()
     
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash

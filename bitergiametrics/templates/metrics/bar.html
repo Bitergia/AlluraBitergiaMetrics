@@ -1,17 +1,23 @@
-{% extends g.theme.master %} {% do g.register_app_css('bar.css',
-compress=False) %} {% block title %}{{c.project.name}} /
-{{c.app.config.options.mount_label}}{% endblock %} {% block header
-%}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia
-Metrics{% endblock %} {% block content %}
+{% extends g.theme.master %} 
+	{% do g.register_app_css('bar.css',compress=False) %} 
+{% block title %}
+	{{c.project.name}} / {{c.app.config.options.mount_label}}
+{% endblock %} 
+{% block header%}
+	{{c.project.name}} / {{c.app.config.options.mount_label}}:
+	Bitergia Metrics
+{% endblock %} 
+
+{% block content %}
 
 <p>
 	<img src="{{g.app_static('bitergia-logo.png')}}">
 <h1>Evolution of Commits per Company in Open Stack</h1>
 
-[<a href="{{g.app_static('companies_commits_10.csv')}}">Data</a>]</p>
-
+[
+<a href="{{g.app_static('companies_commits_10.csv')}}">Data</a>
+]
 </p>
-
 
 <div id="container"></div>
 <!--[if IE]>

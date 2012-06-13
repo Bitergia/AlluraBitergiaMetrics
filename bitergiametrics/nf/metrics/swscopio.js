@@ -34,26 +34,27 @@ function displayEvoTickets(id, datafile) {
 	});
 }
 
-// Display timeseries for commits and committers using
+// Display timeseries for tickets live, people, open/close using
 // the finance envision template
-function displayEvoCommits(id, datafile) {
+function displayEvoTicketsSWScopio(id, datafile) {
 
 	var container = document.getElementById(id);
 
 	$.getJSON(datafile,
 			function(history) {
 
-				var V = envision, firstMonth = history.id[0], commits = [
-						history.id, history.commits ], committers = [
-						history.id, history.committers ], ratio = [ history.id,
-						history.ratio ], dates = history.date, options, vis;
+				var V = envision, firstMonth = history.id[0], live = [
+						history.id, history.live ], people = [
+						history.id, history.people ], open = [ history.id,
+						history.open ], close = [ history.id, history.close ],
+						dates = history.date, options, vis;
 
 				options = {
 					container : container,
 					data : {
-						price : commits,
-						volume : committers,
-						summary : commits
+						price : [ open, close ],
+						volume : people,
+						summary : live
 					},
 					trackFormatter : function(o) {
 
@@ -61,11 +62,13 @@ function displayEvoCommits(id, datafile) {
 						// index = o.index,
 						data = o.series.data, index = data[o.index][0]
 								- firstMonth, value;
-
-						value = dates[index] + ": " + commits[1][index]
-								+ " commits, " + committers[1][index]
-								+ " committers (commits per committer: "
-								+ ratio[1][index] + ")";
+						
+						value =  dates[index] + " ("; 
+						value += live[1][index]   + " live, "; 
+						value += people[1][index] + " people,   ";
+						value += open[1][index] + " open,   ";
+						value += close[1][index] + " close   ";
+						value += ")";						
 
 						return value;
 					},
