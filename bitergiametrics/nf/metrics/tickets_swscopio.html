@@ -1,0 +1,42 @@
+<html>
+<head>
+<link rel="stylesheet"
+                type="text/css"
+                href="envision.min.css"
+                >
+    
+      <link rel="stylesheet"
+                type="text/css"
+                href="/nf/1276635823/_ew_/allura/css/forge/hilite.css"
+                >
+    
+      <link rel="stylesheet"
+                type="text/css"
+                href="/nf/1276635823/_ew_/theme/allura/css/site_style.css"
+                >
+    
+      <link rel="stylesheet"
+                type="text/css"
+                href="/nf/1276635823/_ew_/theme/allura/css/allura.css"
+                >
+</head>
+<body>
+
+    <div class="box">
+    <h2>Tickets SWScopio</h2>
+    <div class="container" id="tickets-swscopio"></div>
+    <a href="{{g.app_static('tickets_per_month_swscopio.json')}}">Data</a></p>
+    </div>
+  
+<script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
+<script type="text/javascript">
+	(function() {
+		displayEvoTicketsSWScopio('tickets-swscopio', '{{g.app_static('tickets_per_month_swscopio.json')}}')
+		// displayEvoTickets('commits-time', '{{g.app_static('tickets_per_month.json')}}')
+		// displayEvoCommits('commits-time','{{g.app_static('commits-timeserie_kde.json')}}')
+	})()
+</script>
+
+</body>
