@@ -63,12 +63,13 @@ function displayEvoTicketsSWScopio(id, datafile) {
 						data = o.series.data, index = data[o.index][0]
 								- firstMonth, value;
 						
-						value =  dates[index] + " ("; 
+						/* value =  dates[index] + " ("; 
 						value += live[1][index]   + " live, "; 
 						value += people[1][index] + " people,   ";
 						value += open[1][index] + " open,   ";
 						value += close[1][index] + " close   ";
-						value += ")";						
+						value += ")"; */
+                        value ="Test";
 
 						return value;
 					},
@@ -217,3 +218,63 @@ function displayEvoLines(id, datafile, show) {
 						vis = new envision.templates.Finance(options);
 					});
 }
+
+// Display timeseries for commits and committers using
+// the finance envision template
+function displayEvoCommits (id, datafile) {
+
+    var
+    container = document.getElementById(id);
+
+    $.getJSON(datafile, function (history) {
+
+    var
+    V = envision,
+    firstMonth = history.id[0],
+    commits = [history.id,history.commits],
+    committers = [history.id,history.committers],
+    ratio = [history.id,history.ratio],
+    dates = history.date,
+    options, vis;
+
+    options = {
+        container : container,
+        data : {
+        price : commits,
+        volume : committers,
+        summary : commits
+        },
+        trackFormatter : function (o) {
+
+        var
+//      index = o.index,
+        data = o.series.data,
+        index = data[o.index][0]-firstMonth,
+        value;
+
+        value = dates[index] + ": " + commits[1][index] + " commits, " + committers[1][index] + " committers (commits per committer: " + ratio[1][index] + ")";
+
+        return value;
+        },
+        xTickFormatter : function (index) {
+        return Math.floor(index/12) + '';
+        },
+        yTickFormatter : function (n) {
+        return n + '';
+        },
+        // Initial selection
+        selection : {
+        data : {
+            x : {
+            min : history.id[0],
+            max : history.id[history.id.length - 1]
+            }
+        }
+        }
+    };
+
+        // Create the TimeSeries
+    vis = new envision.templates.Finance(options);
+    });
+}
+

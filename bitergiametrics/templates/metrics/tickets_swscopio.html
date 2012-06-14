@@ -11,7 +11,10 @@
     <div class="box">
     <h2>Tickets SWScopio</h2>
     <div class="container" id="tickets-swscopio"></div>
-    [<a href="{{g.app_static('tickets_per_month_swscopio.json')}}">Data</a>]</p>
+    <br>[<a href="{{g.app_static('tickets_per_month_swscopio.json')}}">Data</a>]</p>
+    </div>
+    <div class="container" id="commits-time-swscopio"></div>
+    <br>[<a href="{{g.app_static('commits-timeserie_kde.json')}}">Data</a>]</p>
     </div>
   
 <script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
@@ -19,9 +22,10 @@
 <script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
 <script type="text/javascript">
 	(function() {
-		displayEvoTicketsSWScopio('tickets-swscopio', '{{g.app_static('tickets_per_month_swscopio.json')}}')
+		displayEvoTicketsSWScopio('tickets-swscopio', '{{g.app_static('tickets_per_month_swscopio.json')}}');
 		// displayEvoTickets('commits-time', '{{g.app_static('tickets_per_month.json')}}')
 		// displayEvoCommits('commits-time','{{g.app_static('commits-timeserie_kde.json')}}')
+        displayEvoCommits('commits-time-swscopio','{{g.app_static('commits-timeserie_kde.json')}}');
 	})()
 </script>
 

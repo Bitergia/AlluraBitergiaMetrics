@@ -79,8 +79,13 @@ class BitergiaMetricsApp(Application):
     def sidebar_menu(self):
         base = c.app.url
         links = [
-            SitemapEntry('Home', base),
-            SitemapEntry('Search', base + 'search'),
+            SitemapEntry('Summary', base),
+            SitemapEntry('Git', base),
+            SitemapEntry('Time Series', self.config.url() + 'pending', ui_icon=g.icons['stats']),
+            SitemapEntry('Global', self.config.url() + 'pending', ui_icon=g.icons['stats']),
+            SitemapEntry('Tickets', base),
+            SitemapEntry('Time Series', self.config.url() + 'tickets_swscopio', ui_icon=g.icons['stats']),
+            SitemapEntry('Global', self.config.url() + 'pending', ui_icon=g.icons['stats']),
             ]
         return links
 
@@ -179,6 +184,11 @@ class RootController(BaseController):
     @expose('jinja:bitergiametrics:templates/metrics/pie.html')
     @with_trailing_slash
     def pie(self, page=0, limit=10, **kw):
+        return dict()
+
+    @expose('jinja:bitergiametrics:templates/metrics/pending.html')
+    @with_trailing_slash
+    def pending(self, page=0, limit=10, **kw):
         return dict()
     
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
