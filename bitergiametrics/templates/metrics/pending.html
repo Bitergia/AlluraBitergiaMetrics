@@ -1,0 +1,13 @@
+{% extends g.theme.master %}
+
+{% do g.register_app_css('envision.min.css', compress=False) %}
+
+{% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
+
+{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: PENDING{% endblock %}
+
+{% block content %}
+
+Metrics not available yet. 
+
+{% endblock %}

@@ -4,36 +4,17 @@
 
 {% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
 
-{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Bitergia Metrics{% endblock %}
+{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
 
 {% block content %}
 
-<p><img src="{{g.app_static('bitergia-logo.png')}}"><h1>Evolution of Allura</h1></p>
+<p><h1>Allura Metrics</h1></p>
 
 <p>
 Proof of concept of how some parameters of the evolution of a software project can be visualized. 
-Allura integation. Visualization is still preliminary and incomplete. <a href="bar.html">flotr2 sample</a>.
+Allura integation. Visualization is still preliminary and incomplete. 
 </p>
-<p>
-<a href="tickets_swscopio.html">Tickets in swscopio</a>
-</p>
-
-    <div class="box">
-    <h2>Opened Tickets per month</h2>
-    <div class="container" id="commits-time"></div>
-    <p>Top chart shows number of opened tickets per month. The bottom chart shows also number 
-    of opened tickets per month, and allows 
-    the selection of the period to show in the upper charts. 
-    [<a href="{{g.app_static('tickets_per_month.json')}}">Data</a>]</p>
-    </div>
-  
-<script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
-<script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
-<script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
-<script type="text/javascript">
-	(function() {
-		displayEvoTickets('commits-time', '{{g.app_static('tickets_per_month.json')}}')
-		// displayEvoCommits('commits-time','{{g.app_static('commits-timeserie_kde.json')}}')
-	})()
-</script>
+<div align=right>
+Powered by <a href="http://www.bitergia.com"><img src="{{g.app_static('bitergia-logo-peq.png')}}" border=0></a>
+</div>
 {% endblock %}

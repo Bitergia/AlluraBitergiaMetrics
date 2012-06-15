@@ -1,0 +1,34 @@
+{% extends g.theme.master %}
+
+{% do g.register_app_css('envision.min.css', compress=False) %}
+
+{% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
+
+{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Source code{% endblock %}
+
+{% block content %}
+
+    <div class="box" align="center">
+    <h2 class="box">Lines added, removed per month</h2>
+
+    <div class="container" id="lines-time"></div><br><br>
+    <p>[<a href="javascript:displayEvoLines ('lines-time', '{{g.app_static('joomla/lines-timeserie.json')}}', 'added')">Show added lines</a> |
+    <a href="javascript:displayEvoLines ('lines-time', '{{g.app_static('joomla/lines-timeserie.json')}}', 'removed')">Show removed lines</a> | <a href="javascript:displayEvoLines ('lines-time', '{{g.app_static('joomla/lines-timeserie.json')}}', 'added,removed')">Show added and removed lines</a>]</p>
+    <p>Top chart shows number of lines added, removed or both, per month. Below it, ratio of lines changed (added + removed) per month. The bottom chart shows number of commits per month, and allows the selection of the period to show in the upper charts. Move the pointer over the upper charts to see the numbers. [<a href="{{g.app_static('joomla/lines-timeserie.json')}}">Data</a>]</p>
+    </div>
+
+    </div>
+    <div align=right>
+    Powered by <a href="http://www.bitergia.com"><img src="{{g.app_static('bitergia-logo-peq.png')}}" border=0></a>
+    </div>
+
+<script type="text/javascript" src="{{g.app_static('envision.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('jquery-1.7.1.min.js')}}"></script>
+<script type="text/javascript" src="{{g.app_static('swscopio.js')}}"></script>
+<script type="text/javascript">
+	(function() {
+        displayEvoLines ('lines-time','{{g.app_static('joomla/lines-timeserie.json')}}');
+	})()
+</script>
+
+{% endblock %}
