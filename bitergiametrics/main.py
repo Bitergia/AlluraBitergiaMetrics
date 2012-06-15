@@ -81,11 +81,12 @@ class BitergiaMetricsApp(Application):
         links = [
             SitemapEntry('Summary', base),
             SitemapEntry('Git', base),
-            SitemapEntry('Time Series', self.config.url() + 'pending', ui_icon=g.icons['stats']),
-            SitemapEntry('Global', self.config.url() + 'pending', ui_icon=g.icons['stats']),
+            SitemapEntry(' Commits & committers', self.config.url() + 'commits_commiters'),
+            SitemapEntry(' Ratio commits/committer', self.config.url() + 'ratio_commits_commiters'),
+            # SitemapEntry(' Lines added/removed', self.config.url() + 'lines_added_removed', ui_icon=g.icons['stats']),
+            SitemapEntry(' Lines added/removed', self.config.url() + 'lines_added_removed'),
             SitemapEntry('Tickets', base),
-            SitemapEntry('Time Series', self.config.url() + 'tickets_swscopio', ui_icon=g.icons['stats']),
-            SitemapEntry('Global', self.config.url() + 'pending', ui_icon=g.icons['stats']),
+            SitemapEntry(' Open & closed', self.config.url() + 'open_closed'),
             ]
         return links
 
@@ -186,11 +187,24 @@ class RootController(BaseController):
     def pie(self, page=0, limit=10, **kw):
         return dict()
 
-    @expose('jinja:bitergiametrics:templates/metrics/pending.html')
+    # Metrics
+    @expose('jinja:bitergiametrics:templates/metrics/commits_commiters.html')
     @with_trailing_slash
-    def pending(self, page=0, limit=10, **kw):
+    def commits_commiters(self, page=0, limit=10, **kw):
         return dict()
-    
+    @expose('jinja:bitergiametrics:templates/metrics/ratio_commits_commiters.html')
+    @with_trailing_slash
+    def ratio_commits_commiters(self, page=0, limit=10, **kw):
+        return dict()
+    @expose('jinja:bitergiametrics:templates/metrics/lines_added_removed.html')
+    @with_trailing_slash
+    def lines_added_removed(self, page=0, limit=10, **kw):
+        return dict()
+    @expose('jinja:bitergiametrics:templates/metrics/open_closed.html')
+    @with_trailing_slash
+    def open_closed(self, page=0, limit=10, **kw):
+        return dict()
+
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash
     def index(self, page=0, limit=10, **kw):
