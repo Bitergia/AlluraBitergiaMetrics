@@ -31,6 +31,8 @@ from allura.controllers import BaseController, AppDiscussionController
 from bitergiametrics import model as BM
 from bitergiametrics import version
 from bitergiametrics import widgets
+from bitergiametrics import tasks
+
 
 from forgetracker import model as TM
 
@@ -87,6 +89,9 @@ class BitergiaMetricsApp(Application):
             SitemapEntry(' Lines added/removed', self.config.url() + 'lines_added_removed'),
             SitemapEntry('Tickets', base),
             SitemapEntry(' Open & closed', self.config.url() + 'open_closed'),
+            SitemapEntry('Tools', self.config.url() + 'open_closed'),
+            SitemapEntry(' Bicho', self.config.url() + 'bicho'),
+            SitemapEntry(' CVSAnaly', self.config.url() + 'cvsanaly'),
             ]
         return links
 
@@ -205,6 +210,25 @@ class RootController(BaseController):
     def open_closed(self, page=0, limit=10, **kw):
         return dict()
 
+    # Tools management
+    @expose('jinja:bitergiametrics:templates/metrics/bicho.html')
+    @with_trailing_slash
+    @validate(dict(when=validators.UnicodeString(if_empty=None)))
+    def bicho(self, when=None, **kw):
+        if not when:
+            when = ''
+        else:
+            log.info("Executing bicho")
+            tasks.launch_bicho.post("PROJECT")
+        return dict(when=when)
+
+    @expose('jinja:bitergiametrics:templates/metrics/cvsanaly.html')
+    @with_trailing_slash
+    def cvsanaly(self, page=0, limit=10, **kw):
+        return dict()
+
+
+    # FIXME: Clean testing code and direct SQL to MySQL
     @expose('jinja:bitergiametrics:templates/metrics/index.html')
     @with_trailing_slash
     def index(self, page=0, limit=10, **kw):
