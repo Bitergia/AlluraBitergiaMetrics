@@ -9,6 +9,7 @@ BitergiaMetrics.egg-info/requires.txt
 BitergiaMetrics.egg-info/top_level.txt
 bitergiametrics/__init__.py
 bitergiametrics/main.py
+bitergiametrics/tasks.py
 bitergiametrics/version.py
 bitergiametrics/widgets.py
 bitergiametrics/model/__init__.py
