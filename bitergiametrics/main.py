@@ -82,15 +82,17 @@ class BitergiaMetricsApp(Application):
         base = c.app.url
         links = [
             SitemapEntry('Summary', base),
-            SitemapEntry('Git', base),
-            SitemapEntry(' Commits & committers', self.config.url() + 'commits_commiters'),
-            SitemapEntry(' Ratio commits/committer', self.config.url() + 'ratio_commits_commiters'),
-            SitemapEntry(' Lines added/removed', self.config.url() + 'lines_added_removed'),
-            SitemapEntry('Tickets', base),
-            SitemapEntry(' Open & closed', self.config.url() + 'open_closed'),
-            SitemapEntry('Tools', self.config.url() + 'open_closed'),
-            SitemapEntry(' Bicho', self.config.url() + 'bicho'),
-            SitemapEntry(' CVSAnaly', self.config.url() + 'cvsanaly'),
+#            SitemapEntry('Source Code', base),
+            SitemapEntry(' Source Evolution ', self.config.url() + 'scm_milestone0'),
+#            SitemapEntry(' Commits & committers', self.config.url() + 'commits_commiters'),
+#            SitemapEntry(' Ratio commits/committer', self.config.url() + 'ratio_commits_commiters'),
+#            SitemapEntry(' Lines added/removed', self.config.url() + 'lines_added_removed'),
+#            SitemapEntry('Tickets', base),
+            SitemapEntry(' Tickets Evolution ', self.config.url() + 'its_milestone0'),
+#            SitemapEntry(' Open & closed', self.config.url() + 'open_closed'),
+#            SitemapEntry('Tools', self.config.url() + 'open_closed'),
+#            SitemapEntry(' Bicho', self.config.url() + 'bicho'),
+#            SitemapEntry(' CVSAnaly', self.config.url() + 'cvsanaly'),
             ]
         return links
 
@@ -140,6 +142,11 @@ class RootController(BaseController):
         return dict()
 
     # Metrics
+    @expose('jinja:bitergiametrics:templates/metrics/scm_milestone0.html')
+    @with_trailing_slash
+    def scm_milestone0(self, page=0, limit=10, **kw):
+        return dict()
+
     @expose('jinja:bitergiametrics:templates/metrics/commits_commiters.html')
     @with_trailing_slash
     def commits_commiters(self, page=0, limit=10, **kw):
@@ -156,6 +163,11 @@ class RootController(BaseController):
     @with_trailing_slash
     def open_closed(self, page=0, limit=10, **kw):
         return dict()
+    @expose('jinja:bitergiametrics:templates/metrics/its_milestone0.html')
+    @with_trailing_slash
+    def its_milestone0(self, page=0, limit=10, **kw):
+        return dict()
+
 
     # Tools management
     @expose('jinja:bitergiametrics:templates/metrics/bicho.html')

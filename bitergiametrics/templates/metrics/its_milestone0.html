@@ -1,0 +1,36 @@
+{% extends g.theme.master %}
+
+{% do g.register_app_css('metrics.css', compress=False) %}
+{% do g.register_app_css('VizGrimoireJS/src/envision.min.css', compress=False) %}
+{% do g.register_app_css('VizGrimoireJS/src/ITS_Milestone0.css', compress=False) %}
+
+{% block title %}{{c.project.name}} / {{c.app.config.options.mount_label}}{% endblock %}
+
+{% block header %}{{c.project.name}} / {{c.app.config.options.mount_label}}: Tickets{% endblock %}
+
+{% block content %}
+
+    <div class="box" align="center">
+        <div class="column-left" id="its-time">
+            <a href="{{g.app_static('allura/data/json/its-milestone0.json')}}">ITS Data: Open, Close and Changes</a>
+        </div>       
+    </div>
+    <div align=right>
+        Powered by <a href="http://www.bitergia.com"><img src="{{g.app_static('bitergia-logo-peq.png')}}" border=0></a>
+    </div>
+
+
+    <script type="text/javascript" src="{{g.app_static('VizGrimoireJS/src/envision.min.js')}}"></script>
+    <script type="text/javascript" src="{{g.app_static('VizGrimoireJS/src/jquery-1.7.1.min.js')}}"></script>
+    <script type="text/javascript" src="{{g.app_static('VizGrimoireJS/src/Milestone0.js')}}"></script>
+    <script type="text/javascript" src="{{g.app_static('VizGrimoireJS/src/ITS_Milestone0.js')}}"></script>
+    <script type="text/javascript" src="{{g.app_static('VizGrimoireJS/src/markers.js')}}"></script>
+    
+    <script type="text/javascript">
+	(function() {
+        displayM0EvoITS('its-time', "{{g.app_static('allura/data/json/its-milestone0.json')}}", 
+                "{{g.app_static('allura/data/json/markers.json')}}");
+	})()
+</script>
+
+{% endblock %}

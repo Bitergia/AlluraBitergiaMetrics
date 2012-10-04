@@ -1,0 +1,12 @@
+.ui-icon-tool-metrics {
+  background-image: url('metrics_32.png');
+  background-repeat: no-repeat;
+}
+
+#top_nav .ui-icon-tool-metrics {
+  background-image: url('metrics_32.png');
+}
+
+.big_icon.ui-icon-tool-metrics {
+  background-image: url('metrics_48.png');
+}

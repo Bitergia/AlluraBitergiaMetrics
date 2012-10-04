@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 @task
 def launch_bicho(shortname):
-    log.info("TASK: Launching Bicho tool");
+    log.info("TASK: Launching Bicho tool", shortname);
 #    from forgediscussion import model as DM
 #    forum = DM.Forum.query.get(
 #        shortname=shortname, app_config_id=c.app.config._id)
